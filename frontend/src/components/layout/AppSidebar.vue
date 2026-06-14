@@ -7,7 +7,7 @@ const groups = [
   {
     label: 'MONITOR',
     items: [
-      { path: '/',        icon: 'bx-tachometer',    label: 'Dashboard' },
+      { path: '/dashboard', icon: 'bx-tachometer',  label: 'Dashboard' },
       { path: '/camera',  icon: 'bx-camera',        label: 'CCTV' },
     ],
   },
@@ -42,11 +42,11 @@ function isActive(path: string) {
   <aside class="sidebar">
     <nav class="sidebar-nav">
 
-      <!-- Home → back to ZenMAC landing -->
-      <a href="/" class="nav-item nav-home" title="Back to ZenMAC">
+      <!-- Home → ZenMAC Landing -->
+      <router-link to="/" class="nav-item nav-home" title="Landing Page">
         <i class="bx bx-home-alt-2 nav-icon"></i>
         <span class="nav-label">Home</span>
-      </a>
+      </router-link>
 
       <div class="nav-rule"></div>
 

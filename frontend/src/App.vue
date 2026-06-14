@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useMqtt } from '@/composables/useMqtt'
 import { useSimulation } from '@/composables/useSimulation'
 import AppHeader        from '@/components/layout/AppHeader.vue'
@@ -8,8 +9,11 @@ import AppFooter        from '@/components/layout/AppFooter.vue'
 import ProhibitToast    from '@/components/shared/ProhibitToast.vue'
 import ProhibitStatusBar from '@/components/shared/ProhibitStatusBar.vue'
 
+const route  = useRoute()
 const { init }  = useMqtt()
 const { start } = useSimulation()
+
+const isLanding = computed(() => route.meta?.layout === 'landing')
 
 onMounted(() => {
   init()
@@ -18,7 +22,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app-shell">
+  <!-- Landing page — full screen, no shell -->
+  <router-view v-if="isLanding" />
+
+  <!-- HMI shell — header + sidebar + content -->
+  <div v-else class="app-shell">
     <AppHeader />
     <div class="app-body">
       <AppSidebar />
