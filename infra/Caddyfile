@@ -1,0 +1,18 @@
+rnd.zenzerobiogas.com {
+    # MQTT WebSocket bridge — proxy to local backend
+    handle /ws {
+        reverse_proxy localhost:9001
+    }
+
+    # REST API proxy (optional — health, latest, publish)
+    handle /api* {
+        reverse_proxy localhost:3000
+    }
+
+    # SPA frontend
+    handle {
+        root * /home/teddy/rnd-zenzero-public
+        file_server
+        try_files {path} /index.html
+    }
+}

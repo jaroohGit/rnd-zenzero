@@ -44,8 +44,35 @@ jobs:
 
           rsync -a --delete ./frontend/dist/ "$DEPLOY_PATH"/
 
+      - name: Install and build backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --prefix backend
+          npm run build --prefix backend
+
+      - name: Start / restart backend with PM2
+        shell: bash
+        run: |
+          set -euo pipefail
+          # start if not running, restart if already running
+          if pm2 describe rnd-backend > /dev/null 2>&1; then
+            pm2 restart rnd-backend
+          else
+            pm2 start backend/dist/index.js --name rnd-backend
+          fi
+          pm2 save
+
+      - name: Update Caddy config
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo cp infra/Caddyfile /etc/caddy/Caddyfile
+          sudo systemctl reload caddy
+
       - name: Verify deployment
         shell: bash
         run: |
           set -euo pipefail
+          sleep 3
           curl -fsS https://rnd.zenzerobiogas.com >/dev/null
