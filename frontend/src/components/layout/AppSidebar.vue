@@ -7,28 +7,28 @@ const groups = [
   {
     label: 'MONITOR',
     items: [
-      { path: '/dashboard', icon: 'bx-tachometer',  label: 'Dashboard' },
-      { path: '/camera',  icon: 'bx-camera',        label: 'CCTV' },
+      { path: '/dashboard', icon: 'bx-layer',        label: 'Summary'  },
+      { path: '/camera',    icon: 'bx-camera',        label: 'CCTV'     },
     ],
   },
   {
     label: 'CONTROL',
     items: [
-      { path: '/manual',  icon: 'bx-joystick',      label: 'Manual' },
-      { path: '/blower',  icon: 'bx-wind',          label: 'Blower' },
-      { path: '/auto',    icon: 'bx-bot',           label: 'Auto' },
+      { path: '/manual',    icon: 'bx-joystick-alt',  label: 'Manual'   },
+      { path: '/blower',    icon: 'bx-wind',          label: 'Blower'   },
+      { path: '/auto',      icon: 'bx-bot',           label: 'Auto'     },
     ],
   },
   {
     label: 'SETUP',
     items: [
-      { path: '/process', icon: 'bx-slider-alt',    label: 'Params' },
+      { path: '/process',   icon: 'bx-slider-alt',    label: 'Params'   },
     ],
   },
   {
     label: 'DEV',
     items: [
-      { path: '/test',    icon: 'bx-terminal',      label: 'Test' },
+      { path: '/test',      icon: 'bx-terminal',      label: 'Test'     },
     ],
   },
 ]
@@ -40,143 +40,171 @@ function isActive(path: string) {
 
 <template>
   <aside class="sidebar">
-    <nav class="sidebar-nav">
 
-      <!-- Home → ZenMAC Landing -->
-      <router-link to="/" class="nav-item nav-home" title="Landing Page">
-        <i class="bx bx-home-alt-2 nav-icon"></i>
-        <span class="nav-label">Home</span>
-      </router-link>
+    <!-- Brand mark -->
+    <router-link to="/" class="sb-brand">
+      <div class="sb-bars">
+        <span class="sb-bar" v-for="(h,i) in [40,65,100,75,52]" :key="i"
+          :style="{ height: h+'%', background: ['#c0392b','#e67e22','#d4a040','#27ae60','#1abc9c'][i] }">
+        </span>
+      </div>
+      <div class="sb-brand-text">
+        <span class="sb-name">ZenMAC</span>
+        <span class="sb-ver">v1.1</span>
+      </div>
+    </router-link>
 
-      <div class="nav-rule"></div>
+    <div class="sb-divider"></div>
 
+    <!-- Navigation -->
+    <nav class="sb-nav">
       <template v-for="group in groups" :key="group.label">
-        <div class="nav-group-label">{{ group.label }}</div>
+        <div class="sb-group-label">{{ group.label }}</div>
         <router-link
           v-for="item in group.items"
           :key="item.path"
           :to="item.path"
-          class="nav-item"
+          class="sb-item"
           :class="{ active: isActive(item.path) }"
         >
-          <i class="bx nav-icon" :class="item.icon"></i>
-          <span class="nav-label">{{ item.label }}</span>
+          <i class="bx sb-icon" :class="item.icon"></i>
+          <span class="sb-label">{{ item.label }}</span>
+          <span v-if="isActive(item.path)" class="sb-active-bar"></span>
         </router-link>
       </template>
     </nav>
 
-    <!-- Bottom: version tag -->
-    <div class="sidebar-footer">
-      <div class="ver-tag">v1.1</div>
+    <!-- Footer -->
+    <div class="sb-footer">
+      <router-link to="/" class="sb-home-btn">
+        <i class="bx bx-home-alt-2"></i>
+        <span>Landing</span>
+      </router-link>
     </div>
+
   </aside>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ─── Sidebar shell ───────────────────────────────────────────────────── */
 .sidebar {
-  width: 110px;
-  background: #071424;
-  border-right: 1px solid rgba(0,229,255,0.1);
+  width: 230px;
+  background: #080808;
+  border-right: 1px solid rgba(255,255,255,0.06);
   display: flex;
   flex-direction: column;
-  padding: 12px 8px;
   flex-shrink: 0;
   overflow-y: auto;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-}
-
-/* Home button */
-.nav-home {
-  border-color: rgba(212,160,64,0.2) !important;
-  color: #a07030 !important;
-}
-.nav-home:hover {
-  background: rgba(212,160,64,0.1) !important;
-  border-color: rgba(212,160,64,0.45) !important;
-  color: #e8a020 !important;
-}
-
-.nav-rule {
-  height: 1px;
-  background: rgba(255,255,255,0.05);
-  margin: 4px 4px 2px;
-}
-
-/* Group labels */
-.nav-group-label {
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #263238;
-  text-transform: uppercase;
-  padding: 12px 8px 4px;
-  margin-top: 2px;
-}
-.nav-group-label:first-child {
-  padding-top: 4px;
-}
-
-/* Nav items */
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 10px 4px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: #546e7a;
+/* ─── Brand ───────────────────────────────────────────────────────────── */
+.sb-brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 22px 18px 16px;
   text-decoration: none;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  user-select: none;
+  transition: opacity 0.15s;
+}
+.sb-brand:hover { opacity: 0.8; }
+
+.sb-bars {
+  display: flex; align-items: flex-end; gap: 4px;
+  height: 24px; flex-shrink: 0;
+}
+.sb-bar { display: block; width: 4.5px; border-radius: 2px 2px 0 0; }
+
+.sb-brand-text { display: flex; flex-direction: column; gap: 2px; }
+.sb-name {
+  font-size: 19px; font-weight: 800; letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #d4a040, #f0c060);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1;
+}
+.sb-ver {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  color: #1e3040;
 }
 
-.nav-item:hover {
-  background: rgba(0,229,255,0.07);
-  border-color: rgba(0,229,255,0.2);
-  color: #90caf9;
+/* ─── Divider ─────────────────────────────────────────────────────────── */
+.sb-divider {
+  height: 1px; margin: 0 14px 8px;
+  background: rgba(255,255,255,0.05);
 }
 
-.nav-item.active {
-  background: rgba(21,101,192,0.35);
-  border-color: rgba(0,229,255,0.35);
-  color: #00e5ff;
-  box-shadow: 0 0 12px rgba(0,229,255,0.1), inset 0 0 8px rgba(0,229,255,0.05);
+/* ─── Navigation ──────────────────────────────────────────────────────── */
+.sb-nav {
+  flex: 1;
+  display: flex; flex-direction: column;
+  padding: 0 10px;
+  gap: 2px;
 }
 
-.nav-icon {
-  font-size: 20px;
-  transition: transform 0.18s;
-}
-.nav-item:hover .nav-icon  { transform: scale(1.1); }
-.nav-item.active .nav-icon { filter: drop-shadow(0 0 4px rgba(0,229,255,0.6)); }
-
-.nav-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+.sb-group-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  color: #1a2a38; text-transform: uppercase;
+  padding: 18px 10px 6px;
 }
 
-/* Footer */
-.sidebar-footer {
-  padding: 8px;
-  display: flex;
-  justify-content: center;
+.sb-item {
+  position: relative;
+  display: flex; align-items: center; gap: 13px;
+  padding: 13px 14px;
+  border-radius: 11px;
+  text-decoration: none;
+  color: #2d4050;
+  font-size: 15px; font-weight: 600;
+  transition: all 0.15s ease;
+  overflow: hidden;
 }
-.ver-tag {
-  font-size: 9px;
-  color: #1e3a52;
-  font-weight: 600;
-  letter-spacing: 1px;
+.sb-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: #6a8090;
+}
+.sb-item.active {
+  background: rgba(34,197,94,0.08);
+  color: #d0dde8;
+}
+.sb-item.active:hover {
+  background: rgba(34,197,94,0.12);
+}
+
+.sb-icon {
+  font-size: 22px; flex-shrink: 0;
+  color: inherit; transition: all 0.15s;
+}
+.sb-item.active .sb-icon {
+  color: #22c55e;
+  filter: drop-shadow(0 0 4px rgba(34,197,94,0.5));
+}
+
+.sb-label { flex: 1; letter-spacing: 0.1px; }
+
+.sb-active-bar {
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3.5px; border-radius: 0 2px 2px 0;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34,197,94,0.6);
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────────── */
+.sb-footer {
+  padding: 12px 10px 18px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.sb-home-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-radius: 11px;
+  text-decoration: none;
+  color: #2d4050;
+  font-size: 15px; font-weight: 600;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.sb-home-btn i { font-size: 20px; }
+.sb-home-btn:hover {
+  background: rgba(212,160,64,0.08);
+  color: #d4a040;
 }
 </style>

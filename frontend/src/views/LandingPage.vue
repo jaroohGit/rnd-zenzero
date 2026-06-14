@@ -164,6 +164,17 @@ const industries = [
           </div>
         </section>
 
+        <!-- CTA -->
+        <router-link to="/dashboard" class="rnd-enter-btn">
+          <div class="rnd-btn-left">
+            <span class="rnd-btn-eyebrow">READY TO EXPLORE</span>
+            <span class="rnd-btn-label">Launch Demo</span>
+          </div>
+          <div class="rnd-btn-icon-wrap">
+            <i class="bx bx-rocket"></i>
+          </div>
+        </router-link>
+
       </div>
 
     </main>
@@ -320,59 +331,76 @@ const industries = [
 
 /* R&D Block */
 .rnd-block {
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 17px;
 }
 
 .rnd-top {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
 }
 
 .rnd-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 12px; border-radius: 6px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 17px; border-radius: 8px;
   background: rgba(34,197,94,0.08);
   border: 1px solid rgba(34,197,94,0.25);
-  font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+  font-size: 15px; font-weight: 800; letter-spacing: 1.5px;
   color: #22c55e; text-transform: uppercase;
 }
-.rnd-badge i { font-size: 13px; }
+.rnd-badge i { font-size: 18px; }
 
 .rnd-status {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 11px; border-radius: 6px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 15px; border-radius: 8px;
   background: rgba(251,146,60,0.06);
   border: 1px solid rgba(251,146,60,0.18);
-  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
   color: #fb923c;
 }
 .rnd-dot {
-  width: 5px; height: 5px; border-radius: 50%;
+  width: 7px; height: 7px; border-radius: 50%;
   background: #fb923c;
-  box-shadow: 0 0 6px rgba(251,146,60,0.8);
+  box-shadow: 0 0 8px rgba(251,146,60,0.8);
   animation: blink 1.8s infinite;
 }
 
 .rnd-title {
-  font-size: 22px; font-weight: 800;
-  color: #e2e8f0; letter-spacing: -0.5px; line-height: 1.1;
+  font-size: 40px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.1;
+  background: linear-gradient(
+    110deg,
+    #5a8aa4 0%,
+    #c8e0f0 12%,
+    #ffffff 25%,
+    #e8f4ff 38%,
+    #ffffff 50%,
+    #d0e8f8 62%,
+    #ffffff 75%,
+    #9ab8cc 88%,
+    #dbeeff 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rndShimmer 6s linear infinite, rndGlow 3.5s ease-in-out infinite;
 }
 
 .rnd-desc {
-  font-size: 12.5px; color: #344050; line-height: 1.7;
+  font-size: 17px; color: #344050; line-height: 1.7;
 }
 
 .rnd-tags {
-  display: flex; flex-wrap: wrap; gap: 6px;
+  display: flex; flex-wrap: wrap; gap: 8px;
 }
 .rnd-tag {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 12px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 17px; border-radius: 24px;
   background: #0d0d0d;
   border: 1px solid rgba(255,255,255,0.08);
-  font-size: 10.5px; font-weight: 600; color: #3a4f60;
+  font-size: 14px; font-weight: 600; color: #3a4f60;
   transition: all 0.15s;
 }
-.rnd-tag i { font-size: 12px; }
+.rnd-tag i { font-size: 17px; }
 .rnd-tag:hover {
   border-color: rgba(34,197,94,0.25);
   color: #22c55e;
@@ -474,8 +502,83 @@ const industries = [
 .foot-dot { color: #111; }
 .foot-ver { font-family: monospace; letter-spacing: 1px; }
 
+/* ─── Launch Demo button ───────────────────────────────────────────────── */
+.rnd-enter-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(34,197,94,0.07) 0%, rgba(0,0,0,0) 100%);
+  border: 1px solid rgba(34,197,94,0.25);
+  text-decoration: none;
+  position: relative; overflow: hidden;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  animation: btnPulse 3.5s ease-in-out infinite;
+  margin-top: 4px;
+}
+.rnd-enter-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.03));
+  opacity: 0; transition: opacity 0.3s;
+}
+.rnd-enter-btn:hover::before { opacity: 1; }
+.rnd-enter-btn:hover {
+  border-color: rgba(34,197,94,0.55);
+  box-shadow: 0 0 32px rgba(34,197,94,0.18), 0 8px 32px rgba(0,0,0,0.5);
+  transform: translateY(-2px);
+}
+
+.rnd-btn-left {
+  display: flex; flex-direction: column; gap: 4px; position: relative;
+}
+.rnd-btn-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  color: #1a3528; text-transform: uppercase;
+}
+.rnd-btn-label {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.3px;
+  color: #22c55e;
+  transition: color 0.2s;
+}
+.rnd-enter-btn:hover .rnd-btn-label { color: #4ade80; }
+
+.rnd-btn-icon-wrap {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.25);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+  transition: all 0.3s;
+}
+.rnd-btn-icon-wrap i {
+  font-size: 24px; color: #22c55e; transition: transform 0.3s;
+}
+.rnd-enter-btn:hover .rnd-btn-icon-wrap {
+  background: rgba(34,197,94,0.18);
+  border-color: rgba(34,197,94,0.5);
+  box-shadow: 0 0 16px rgba(34,197,94,0.3);
+}
+.rnd-enter-btn:hover .rnd-btn-icon-wrap i {
+  transform: rotate(-20deg) scale(1.15);
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 0px  rgba(34,197,94,0),    0 0 0px  rgba(34,197,94,0); }
+  50%       { box-shadow: 0 0 20px rgba(34,197,94,0.15), 0 0 40px rgba(34,197,94,0.06); }
+}
+
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.3; }
+}
+
+@keyframes rndShimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: -300% center; }
+}
+
+@keyframes rndGlow {
+  0%, 100% { filter: brightness(1)    drop-shadow(0 0 0px  rgba(180,215,245,0)); }
+  50%       { filter: brightness(1.18) drop-shadow(0 0 18px rgba(160,200,240,0.3)); }
 }
 </style>

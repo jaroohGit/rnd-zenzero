@@ -17,7 +17,6 @@ const auth = useAuthorityStore()
           <span class="nl-b b3"></span>
           <span class="nl-b b4"></span>
         </div>
-        <span class="nl-name">ZenMAC</span>
       </div>
       <div class="hdr-divider"></div>
       <div class="hdr-titles">
@@ -77,17 +76,20 @@ const auth = useAuthorityStore()
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 .app-header {
-  background: #071424;
-  border-bottom: 1px solid rgba(0,229,255,0.18);
+  background: #060606;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   padding: 0 20px;
-  height: 56px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-shrink: 0;
-  box-shadow: 0 1px 0 rgba(0,229,255,0.08), 0 4px 24px rgba(0,0,0,0.4);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03), 0 4px 24px rgba(0,0,0,0.6);
 }
 
 /* ── Brand ── */
@@ -107,18 +109,18 @@ const auth = useAuthorityStore()
 
 .hdr-titles { display: flex; flex-direction: column; gap: 1px; }
 .hdr-sub {
-  font-size: 9px; font-weight: 600; letter-spacing: 2px;
+  font-size: 19px; font-weight: 600; letter-spacing: 2px;
   color: #546e7a; text-transform: uppercase;
 }
 .hdr-divider {
-  width: 1px; height: 28px; background: rgba(255,255,255,0.1);
+  width: 1px; height: 34px; background: rgba(255,255,255,0.1);
 }
 .hdr-badge {
-  padding: 2px 8px; border-radius: 6px;
-  background: rgba(0,229,255,0.1);
-  border: 1px solid rgba(0,229,255,0.25);
-  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
-  color: #00e5ff;
+  padding: 6px 18px; border-radius: 10px;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.25);
+  font-size: 19px; font-weight: 800; letter-spacing: 1.5px;
+  color: #22c55e;
 }
 
 /* ── Right side ── */
@@ -136,10 +138,10 @@ const auth = useAuthorityStore()
   background: #37474f; transition: background 0.4s;
 }
 .mqtt-txt { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #546e7a; }
-.mqtt-pill.connected .mqtt-dot { background: #00e676; box-shadow: 0 0 6px rgba(0,230,118,0.7); animation: pulse 2s infinite; }
-.mqtt-pill.connected .mqtt-txt { color: #00e676; }
-.mqtt-pill.connecting .mqtt-dot { background: #ffa726; animation: pulse 1s infinite; }
-.mqtt-pill.connecting .mqtt-txt { color: #ffa726; }
+.mqtt-pill.connected .mqtt-dot { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); animation: pulse 2s infinite; }
+.mqtt-pill.connected .mqtt-txt { color: #22c55e; }
+.mqtt-pill.connecting .mqtt-dot { background: #f59e0b; animation: pulse 1s infinite; }
+.mqtt-pill.connecting .mqtt-txt { color: #f59e0b; }
 
 /* Auth bar */
 .authbar {
@@ -163,20 +165,21 @@ const auth = useAuthorityStore()
   width: 6px; height: 6px; border-radius: 50%;
   background: #263238; transition: all 0.25s;
 }
-.auth-tier.active { color: #00e676; }
+.auth-tier.active { color: #22c55e; }
 .auth-tier.active .tier-dot {
-  background: #00e676;
-  box-shadow: 0 0 6px rgba(0,230,118,0.8);
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34,197,94,0.8);
 }
 
 .req-btn {
   display: flex; align-items: center; gap: 5px;
   padding: 5px 14px; border-radius: 8px;
-  background: linear-gradient(135deg, #0d3a6e, #1565c0);
-  border: 1px solid rgba(0,229,255,0.2);
-  color: #90caf9; font-size: 10px; font-weight: 700;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: #22c55e; font-size: 10px; font-weight: 700;
   letter-spacing: 0.5px; cursor: pointer;
   transition: all 0.2s;
+  font-family: inherit;
 }
 .req-btn:hover { filter: brightness(1.15); color: #fff; }
 .req-btn.release {
@@ -192,7 +195,7 @@ const auth = useAuthorityStore()
   padding: 5px 12px; border-radius: 8px;
   font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
 }
-.cmd-status.ok      { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+.cmd-status.ok      { background: rgba(34,197,94,0.08); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
 .cmd-status.blocked { background: rgba(239,83,80,0.1); color: #ef9a9a; border: 1px solid rgba(239,83,80,0.3); }
 .cmd-status.no-mqtt { background: rgba(255,167,38,0.1); color: #ffa726; border: 1px solid rgba(255,167,38,0.3); }
 .cmd-status i { font-size: 14px; }
