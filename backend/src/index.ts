@@ -11,11 +11,12 @@ const PORT         = Number(process.env.PORT         ?? 3000)
 const WS_PORT      = Number(process.env.WS_PORT      ?? 9001)
 const MQTT_HOST    =        process.env.MQTT_HOST    ?? 'mqtt.zenzerobiogas.com'
 const MQTT_PORT    = Number(process.env.MQTT_PORT    ?? 1884)
+const MQTT_URL_ENV =        process.env.MQTT_URL
 const TOPIC_STATUS =        process.env.TOPIC_STATUS ?? 'Demo/zenmac/QQ'
 const TOPIC_CMD    =        process.env.TOPIC_CMD    ?? 'Demo/zenmac/cmd'
 const TOPIC_AUTH   =        process.env.TOPIC_AUTH   ?? 'Demo/zenmac/authority'
 
-const MQTT_URL = `mqtt://${MQTT_HOST}:${MQTT_PORT}`
+const MQTT_URL = MQTT_URL_ENV?.trim() || `mqtt://${MQTT_HOST}:${MQTT_PORT}`
 
 // ── MQTT Client (server-side subscriber) ─────────────────────────────────────
 let latestStatus: Record<string, unknown> = {}
@@ -68,7 +69,7 @@ app.get('/health', (_req, res) => {
     status:       'ok',
     mqttConnected,
     bridge:       `ws://localhost:${WS_PORT}`,
-    broker:       `${MQTT_HOST}:${MQTT_PORT}`,
+    broker:       MQTT_URL,
     bridgeClients: wss?.clients.size ?? 0,
     topics:       { status: TOPIC_STATUS, cmd: TOPIC_CMD, auth: TOPIC_AUTH },
   })
