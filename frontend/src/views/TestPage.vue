@@ -37,7 +37,7 @@ function doManualConnect() {
 }
 
 // ─────────── Direct Publish (bypass auth) ───────────
-const rawTopic   = ref('Demo/zenmac/cmd')
+const rawTopic   = ref('Demo/zenmac/QQ')
 const rawPayload = ref('{"d":{"Lamp1":1},"src":"WEB","ts":0}')
 function directPublish() {
   if (mqttState.value !== 'connected') { addLog('❌ MQTT ไม่ได้ต่อ', 'err'); return }
@@ -70,13 +70,13 @@ function allTestLamps(state: boolean) {
 
 // ─────────── Command Presets ───────────
 const presets = [
-  { label: 'All Lamps ON',     topic: 'Demo/zenmac/cmd',  payload: { Lamp1:1,Lamp2:1,Lamp3:1,Lamp4:1,Lamp5:1,Lamp6:1,Lamp7:1 } },
-  { label: 'All Lamps OFF',    topic: 'Demo/zenmac/cmd',  payload: { Lamp1:0,Lamp2:0,Lamp3:0,Lamp4:0,Lamp5:0,Lamp6:0,Lamp7:0 } },
-  { label: 'Lamp1 ON',         topic: 'Demo/zenmac/cmd',  payload: { Lamp1: 1 } },
-  { label: 'Lamp1 OFF',        topic: 'Demo/zenmac/cmd',  payload: { Lamp1: 0 } },
+  { label: 'All Lamps ON',     topic: 'Demo/zenmac/QQ',  payload: { Lamp1:1,Lamp2:1,Lamp3:1,Lamp4:1,Lamp5:1,Lamp6:1,Lamp7:1 } },
+  { label: 'All Lamps OFF',    topic: 'Demo/zenmac/QQ',  payload: { Lamp1:0,Lamp2:0,Lamp3:0,Lamp4:0,Lamp5:0,Lamp6:0,Lamp7:0 } },
+  { label: 'Lamp1 ON',         topic: 'Demo/zenmac/QQ',  payload: { Lamp1: 1 } },
+  { label: 'Lamp1 OFF',        topic: 'Demo/zenmac/QQ',  payload: { Lamp1: 0 } },
   { label: 'TB01 START 60%',   topic: 'Demo/zenmac/blower/tb01/cmd', payload: { cmd:'start', blower_id:1, speed_pct:60 } },
   { label: 'TB01 STOP',        topic: 'Demo/zenmac/blower/tb01/cmd', payload: { cmd:'stop',  blower_id:1, speed_pct:0  } },
-  { label: 'Ping',             topic: 'Demo/zenmac/cmd',  payload: { ping: 1 } },
+  { label: 'Ping',             topic: 'Demo/zenmac/QQ',  payload: { ping: 1 } },
 ]
 const selPreset = ref(0)
 function sendPreset() {
@@ -200,7 +200,8 @@ function forceBlower(id: number, state: 'RUN' | 'STOP' | 'STBY') {
       </div>
       <div class="field-lbl">TOPIC</div>
       <select class="hmi-select" style="width:100%;margin-bottom:8px;" v-model="rawTopic">
-        <option value="Demo/zenmac/cmd">Demo/zenmac/cmd</option>
+        <option value="Demo/zenmac/QQ">Demo/zenmac/QQ (cmd)</option>
+      <option value="Demo/zenmac/cmd">Demo/zenmac/cmd</option>
         <option value="Demo/zenmac/mode">Demo/zenmac/mode</option>
         <option value="Demo/zenmac/authority">Demo/zenmac/authority</option>
         <option value="Demo/zenmac/blower/tb01/cmd">blower/tb01/cmd</option>

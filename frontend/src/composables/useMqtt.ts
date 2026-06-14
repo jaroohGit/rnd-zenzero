@@ -54,8 +54,11 @@ function log(msg: string) {
 
 // ── Message handler ───────────────────────────────────────────────────────
 function handleMessage(topic: string, payload: Buffer) {
-  let data: { d?: Record<string, unknown>; holder?: string }
+  let data: { d?: Record<string, unknown>; holder?: string; src?: string }
   try { data = JSON.parse(payload.toString()) } catch { return }
+
+  // Skip our own command messages (commands have src:'WEB') to avoid self-echo
+  if (data.src) return
 
   // Authority topic
   if (topic === TOPIC_AUTH) {
