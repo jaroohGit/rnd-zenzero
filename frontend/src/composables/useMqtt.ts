@@ -2,8 +2,8 @@
  * MQTT Composable — Frontend
  *
  * Connects directly to the production MQTT WebSocket endpoint.
- * In production we proxy `/mqtt-1884` on the same host to the broker's
- * `/mqtt` WebSocket listener so the app behaves like the original /rnd page.
+ * In production we use the same-origin `/ws` proxy that Caddy exposes for the
+ * rnd site and forward it to the real broker WebSocket listener.
  */
 
 import { ref } from 'vue'
@@ -27,7 +27,7 @@ const _isLocalHost = ['localhost', '127.0.0.1'].includes(_hostname)
 export const MQTT_WS_URL: string =
   import.meta.env.VITE_MQTT_WS_URL ?? (_isLocalHost
     ? 'wss://mqtt.zenzerobiogas.com/mqtt'
-    : `${_proto}://${_host}/mqtt-1884`)
+    : `${_proto}://${_host}/ws`)
 
 // ── MQTT Topics (read from .env) ──────────────────────────────────────────
 export const TOPIC_STATUS = import.meta.env.VITE_TOPIC_STATUS ?? 'Demo/zenmac/QQ'
