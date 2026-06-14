@@ -4,7 +4,7 @@ import { useAuthorityStore } from '@/stores/authority'
 import { useSensorsStore }   from '@/stores/sensors'
 import { useProcessParamStore } from '@/stores/processParam'
 import { useBlowerStore }    from '@/stores/blower'
-import { mqttState, mqttLabel, mqttDebugLog, useMqtt } from '@/composables/useMqtt'
+import { mqttState, mqttLabel, mqttDebugLog, MQTT_WS_URL, useMqtt } from '@/composables/useMqtt'
 import PanelCard from '@/components/shared/PanelCard.vue'
 
 const auth    = useAuthorityStore()
@@ -30,7 +30,7 @@ watch(() => auth.lastCmdResult, (r) => {
 })
 
 // ─────────── MQTT Connection Debug ───────────
-const manualUrl = ref('ws://localhost:5173/mqtt-1884')  // bridge → tcp:1884
+const manualUrl = ref(MQTT_WS_URL)
 function doManualConnect() {
   addLog(`🔌 Manual connect: ${manualUrl.value}`, 'info')
   manualConnect(manualUrl.value.trim())

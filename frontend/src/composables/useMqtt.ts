@@ -1,10 +1,9 @@
 /**
  * MQTT Composable — Frontend
  *
- * Connects to the mqtt-gateway backend service via WebSocket.
- * The gateway bridges to tcp://mqtt.zenzerobiogas.com:1884 (TCP MQTT).
- *
- * Flow: Browser → ws://localhost:9001 → Gateway → tcp broker:1884
+ * Connects directly to the production MQTT WebSocket endpoint.
+ * In production we proxy `/mqtt-1884` on the same host to the broker's
+ * `/mqtt` WebSocket listener so the app behaves like the original /rnd page.
  */
 
 import { ref } from 'vue'
@@ -18,16 +17,17 @@ import { useBlowerStore }       from '@/stores/blower'
 import { useProcessParamStore } from '@/stores/processParam'
 
 // ── Broker info (read from .env) ─────────────────────────────────────────
-export const BROKER_HOST = import.meta.env.VITE_MQTT_HOST  ?? 'mqtt.zenzerobiogas.com'
+export const BROKER_HOST = import.meta.env.VITE_MQTT_HOST ?? 'mqtt.zenzerobiogas.com'
 export const BROKER_PORT = Number(import.meta.env.VITE_MQTT_PORT ?? 1884)
-const        WS_PORT     = Number(import.meta.env.VITE_MQTT_WS_PORT ?? 9001)
 
-// Gateway URL: ใช้ VITE_GATEWAY_URL ถ้าตั้งไว้ (เช่น .env.local)
-// ถ้าไม่ตั้ง → auto-detect จาก window.location.hostname (สำหรับ production)
 const _proto = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws'
-const _host  = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
-export const GATEWAY_URL: string =
-  import.meta.env.VITE_GATEWAY_URL ?? `${_proto}://${_host}:${WS_PORT}`
+const _host  = typeof window !== 'undefined' ? window.location.host : 'localhost'
+const _hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+const _isLocalHost = ['localhost', '127.0.0.1'].includes(_hostname)
+export const MQTT_WS_URL: string =
+  import.meta.env.VITE_MQTT_WS_URL ?? (_isLocalHost
+    ? 'wss://mqtt.zenzerobiogas.com/mqtt'
+    : `${_proto}://${_host}/mqtt-1884`)
 
 // ── MQTT Topics (read from .env) ──────────────────────────────────────────
 export const TOPIC_STATUS = import.meta.env.VITE_TOPIC_STATUS ?? 'Demo/zenmac/QQ'
@@ -92,10 +92,10 @@ function handleMessage(topic: string, payload: Buffer) {
 function connect() {
   mqttState.value = 'connecting'
   mqttLabel.value = `Connecting to ${BROKER_HOST}:${BROKER_PORT}…`
-  log(`⏳ Connecting via gateway: ${GATEWAY_URL}`)
+  log(`⏳ Connecting via websocket: ${MQTT_WS_URL}`)
 
   try {
-    const client = mqttLib.connect(GATEWAY_URL, {
+    const client = mqttLib.connect(MQTT_WS_URL, {
       clientId:        `hmi_dc_${Math.random().toString(16).slice(2, 8)}`,
       keepalive:       30,
       reconnectPeriod: 0,         // manual reconnect on close
@@ -165,7 +165,7 @@ export function useMqtt() {
   function init() {
     if (_initialized) return
     _initialized = true
-    log(`🚀 MQTT init — broker: ${BROKER_HOST}:${BROKER_PORT} via ${GATEWAY_URL}`)
+    log(`🚀 MQTT init — broker: ${BROKER_HOST}:${BROKER_PORT} via ${MQTT_WS_URL}`)
     connect()
   }
 
