@@ -5,7 +5,7 @@ import { useProcessParamStore } from '@/stores/processParam'
 import { useAuthorityStore }    from '@/stores/authority'
 import {
   mqttState, mqttLabel,
-  BROKER_HOST, BROKER_PORT, GATEWAY_URL,
+  BROKER_HOST, BROKER_PORT, MQTT_WS_URL,
   TOPIC_STATUS, TOPIC_AUTH,
 } from '@/composables/useMqtt'
 
@@ -90,8 +90,8 @@ function stLabel(s: string) { return s === 'trig' ? 'TRIGGERED' : s === 'near' ?
       <div class="cb-item">
         <i class="bx bx-transfer-alt cb-icon"></i>
         <div class="cb-lines">
-          <span class="cb-key">GATEWAY (WS)</span>
-          <span class="cb-val mono">{{ GATEWAY_URL }}</span>
+          <span class="cb-key">MQTT WS</span>
+          <span class="cb-val mono">{{ MQTT_WS_URL }}</span>
         </div>
       </div>
       <div class="cb-sep"></div>
@@ -262,8 +262,8 @@ function stLabel(s: string) { return s === 'trig' ? 'TRIGGERED' : s === 'near' ?
               { key:'Status / CMD Topic', val: TOPIC_STATUS, color:'#4ade80' },
               { key:'Auth Topic',         val: TOPIC_AUTH,   color:'#f59e0b' },
               { key:'Broker TCP',         val: BROKER_HOST + `:` + BROKER_PORT, color:'#38bdf8' },
-              { key:'Broker WS',          val: BROKER_HOST + `:8083/mqtt`,      color:'#38bdf8' },
-              { key:'Gateway (prod)',     val: GATEWAY_URL,  color:'#7dd3fc' },
+              { key:'Broker WS',          val: MQTT_WS_URL,  color:'#38bdf8' },
+              { key:'WS Endpoint',        val: MQTT_WS_URL,  color:'#7dd3fc' },
               { key:'Protocol',           val: 'MQTT v3.1.1 over WebSocket', color:'#94a3b8' },
               { key:'QoS',               val: '0 (at most once)',            color:'#94a3b8' },
             ]" :key="r.key">
