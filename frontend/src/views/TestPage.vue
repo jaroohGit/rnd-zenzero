@@ -11,7 +11,7 @@ const auth    = useAuthorityStore()
 const sensors = useSensorsStore()
 const pp      = useProcessParamStore()
 const blower  = useBlowerStore()
-const { manualConnect } = useMqtt()
+const { manualConnect, rawPublish } = useMqtt()
 
 // ─────────── Event Log ───────────
 const log = ref<{ ts: string; msg: string; type: 'ok' | 'err' | 'warn' | 'info' | 'payload' }[]>([])
@@ -36,7 +36,7 @@ function doManualConnect() {
   manualConnect(manualUrl.value.trim())
 }
 
-// ─────────── Direct Publish (bypass auth) ───────────
+// ─────────── Direct Publish (true raw — bypasses auth entirely) ───────────
 const rawTopic   = ref('Demo/zenmac/QQ')
 const rawPayload = ref('{"d":{"Lamp1":1},"src":"WEB","ts":0}')
 function directPublish() {
@@ -44,10 +44,10 @@ function directPublish() {
   try {
     const parsed = JSON.parse(rawPayload.value)
     if (parsed.ts === 0) parsed.ts = Date.now()
-    // เรียก publish โดยตรงผ่าน auth._publish (ไม่ตรวจ iHaveControl)
-    auth.sendCommand(parsed.d ?? parsed, rawTopic.value)
-    addLog(`📡 RAW → ${rawTopic.value}`, 'ok')
-    addLog(JSON.stringify(parsed), 'payload')
+    const msg = JSON.stringify(parsed)
+    const ok = rawPublish(rawTopic.value, msg)
+    addLog(ok ? `📡 RAW → ${rawTopic.value}` : '❌ publish failed', ok ? 'ok' : 'err')
+    if (ok) addLog(msg, 'payload')
   } catch (e) {
     addLog(`❌ JSON error: ${e}`, 'err')
   }

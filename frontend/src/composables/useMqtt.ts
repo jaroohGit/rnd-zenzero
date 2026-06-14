@@ -169,6 +169,19 @@ export function useMqtt() {
     connect()
   }
 
+  /** Publish directly — bypasses all authority checks (for TestPage diagnostics) */
+  function rawPublish(topic: string, payload: string): boolean {
+    if (!_client || !_connected) { log('❌ rawPublish: not connected'); return false }
+    try {
+      _client.publish(topic, payload)
+      log(`📤 RAW → ${topic}: ${payload.slice(0, 60)}`)
+      return true
+    } catch (e) {
+      log(`❌ rawPublish error: ${e}`)
+      return false
+    }
+  }
+
   /** Manual connect to any WebSocket URL (for Test page debugging) */
   function manualConnect(url: string) {
     if (_client) {
@@ -207,5 +220,5 @@ export function useMqtt() {
     }
   }
 
-  return { init, manualConnect }
+  return { init, manualConnect, rawPublish }
 }
