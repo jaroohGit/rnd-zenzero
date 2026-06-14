@@ -1,0 +1,39 @@
+name: Deploy RND Site
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: rnd-zenzero-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+      - rnd
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Deploy static site to Caddy root
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DEPLOY_PATH="${DEPLOY_PATH:-/home/teddy/rnd-zenzero}"
+          mkdir -p "$DEPLOY_PATH"
+
+          rsync -a --delete --exclude ".git" ./ "$DEPLOY_PATH"/
+
+      - name: Verify deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS https://rnd.zenzerobiogas.com >/dev/null
