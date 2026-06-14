@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { AuthTier } from '@/types'
 
+const TOPIC_CMD  = import.meta.env.VITE_TOPIC_CMD  ?? 'Demo/zenmac/cmd'
+const TOPIC_AUTH = import.meta.env.VITE_TOPIC_AUTH ?? 'Demo/zenmac/authority'
+
 export const useAuthorityStore = defineStore('authority', () => {
   const MY_TIER: AuthTier = 'WEB'
   const authHolder  = ref<AuthTier>('LOCAL')
@@ -24,15 +27,15 @@ export const useAuthorityStore = defineStore('authority', () => {
 
   function toggleControl() {
     if (iHaveControl.value) {
-      _pub('Demo/zenmac/authority', JSON.stringify({ tier: 'LOCAL', action: 'release', ts: Date.now() }))
+      _pub(TOPIC_AUTH, JSON.stringify({ tier: 'LOCAL', action: 'release', ts: Date.now() }))
       authHolder.value = 'LOCAL'
     } else {
-      _pub('Demo/zenmac/authority', JSON.stringify({ tier: MY_TIER, action: 'request', ts: Date.now() }))
+      _pub(TOPIC_AUTH, JSON.stringify({ tier: MY_TIER, action: 'request', ts: Date.now() }))
       authHolder.value = MY_TIER
     }
   }
 
-  function sendCommand(payload: object, topic = 'Demo/zenmac/cmd'): boolean {
+  function sendCommand(payload: object, topic = TOPIC_CMD): boolean {
     lastCmdTopic.value   = topic
     lastCmdPayload.value = JSON.stringify(payload)
 

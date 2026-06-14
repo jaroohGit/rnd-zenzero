@@ -27,23 +27,19 @@ function displayOn(i: number): boolean {
   return pp.lampActualState[i] ?? false
 }
 
-// เมื่อ MQTT ส่งค่าจริงกลับมา ถ้าตรงกับที่สั่ง → ยืนยัน pending
+// watch scanCount — fires every MQTT scan (every ~1s) regardless of lamp value change
 watch(
-  () => [...pp.lampActualState],
-  (actual) => {
-    actual.forEach((actualOn, i) => {
-      if (lamps[i].pending) {
-        // PLC ส่งค่ากลับมา — clear pending หลัง 0.5 วิ (รอ UI update)
-        setTimeout(() => {
-          if (lamps[i].commanded !== null) {
-            const ok = actualOn === lamps[i].commanded
-            if (ok || true) {   // accept PLC response always
-              lamps[i].commanded = null
-              lamps[i].pending = false
-              if (pendingTimers[i]) { clearTimeout(pendingTimers[i]); pendingTimers[i] = null as any }
-            }
-          }
-        }, 500)
+  () => pp.scanCount,
+  () => {
+    lamps.forEach((lamp, i) => {
+      if (!lamp.pending) return
+      const actualOn = pp.lampActualState[i]
+      const matched = actualOn === lamp.commanded
+      if (matched) {
+        // PLC confirmed echo — clear immediately
+        lamp.commanded = null
+        lamp.pending   = false
+        if (pendingTimers[i]) { clearTimeout(pendingTimers[i]); pendingTimers[i] = null as any }
       }
     })
   }
@@ -64,7 +60,10 @@ function sendLampCmd(idx: number, state: boolean) {
     lamps[idx].commanded = state
     lamps[idx].pending = true
     if (pendingTimers[idx]) clearTimeout(pendingTimers[idx])
-    pendingTimers[idx] = setTimeout(() => { lamps[idx].pending = false }, 5000) as any
+    pendingTimers[idx] = setTimeout(() => {
+      lamps[idx].pending = false
+      lamps[idx].commanded = null   // echo timeout — revert to PLC actual
+    }, 5000) as any
     auth.sendCommand({ ['Lamp' + lampNo]: state ? 1 : 0 })
     showToast('💡 Lamp' + lampNo + ' → ' + (state ? 'ON' : 'OFF') + ' (sent)')
   })
@@ -82,7 +81,7 @@ function allLamps(state: boolean) {
       lamps[i].commanded = state
       lamps[i].pending = true
       if (pendingTimers[i]) clearTimeout(pendingTimers[i])
-      pendingTimers[i] = setTimeout(() => { lamps[i].pending = false }, 5000) as any
+      pendingTimers[i] = setTimeout(() => { lamps[i].pending = false; lamps[i].commanded = null }, 5000) as any
     }
     auth.sendCommand(payload)
     showToast('💡 ALL LAMPS → ' + (state ? 'ON' : 'OFF'))

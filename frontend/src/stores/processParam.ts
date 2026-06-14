@@ -16,6 +16,7 @@ export const useProcessParamStore = defineStore('processParam', () => {
   const lampActualState = reactive<boolean[]>(Array(LAMPS).fill(false))
   const lampCmdState    = reactive<boolean[]>(Array(LAMPS).fill(false))
   const autoEnable      = ref(false)
+  const scanCount       = ref(0)
   const lastPayload     = ref('// กด Save & Apply เพื่อดู payload')
   const rowStatus       = reactive<string[]>(ppRows.map(() => 'idle'))
 
@@ -100,6 +101,7 @@ export const useProcessParamStore = defineStore('processParam', () => {
 
   function setActualLamps(states: boolean[]) {
     for (let i = 0; i < LAMPS; i++) lampActualState[i] = states[i] ?? false
+    scanCount.value++
   }
 
   function saveParams() {
@@ -124,6 +126,6 @@ export const useProcessParamStore = defineStore('processParam', () => {
   return {
     ppRows, lampActualState, lampCmdState, autoEnable, lastPayload, rowStatus,
     condMet, condOff, isNear, barClass, barPct,
-    evaluate, setActualLamps, saveParams, resetLatch, LAMPS
+    evaluate, setActualLamps, saveParams, resetLatch, LAMPS, scanCount
   }
 })
