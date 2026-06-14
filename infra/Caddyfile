@@ -1,12 +1,12 @@
 rnd.zenzerobiogas.com {
-    # MQTT WebSocket proxy → broker port 8083 (plain WS, no backend needed)
+    # MQTT WebSocket proxy → the production EMQX instance used by zenmac-backend
     handle /ws {
         rewrite * /mqtt
-        reverse_proxy mqtt.zenzerobiogas.com:8083 {
+        reverse_proxy 127.0.0.1:8085 {
             transport http {
                 versions 1.1
             }
-            header_up Host mqtt.zenzerobiogas.com
+            header_up Host rnd.zenzerobiogas.com
         }
     }
 

@@ -117,6 +117,8 @@ export const useBlowerStore = defineStore('blower', () => {
       if (d[sk + '_kw']    !== undefined) b.kw    = +d[sk + '_kw']!
       if (d[sk + '_cmm']   !== undefined) b.cmm   = +d[sk + '_cmm']!
       if (d[sk + '_dt']    !== undefined) b.dt    = +d[sk + '_dt']!
+      if (d[sk + '_orp']   !== undefined) b.orp   = Math.round(+d[sk + '_orp']!)
+      if (d[sk + '_ph']    !== undefined) b.ph    = +d[sk + '_ph']!
     })
   }
 
