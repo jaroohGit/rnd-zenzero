@@ -38,41 +38,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           DEPLOY_PATH="${DEPLOY_PATH:-/home/teddy/rnd-zenzero-public}"
           mkdir -p "$DEPLOY_PATH"
-
           rsync -a --delete ./frontend/dist/ "$DEPLOY_PATH"/
 
-      - name: Install and build backend
+      - name: Update Caddy config via admin API
         shell: bash
         run: |
-          set -euo pipefail
-          npm ci --prefix backend
-          npm run build --prefix backend
-
-      - name: Start / restart backend with PM2
-        shell: bash
-        run: |
-          set -euo pipefail
-          # start if not running, restart if already running
-          if pm2 describe rnd-backend > /dev/null 2>&1; then
-            pm2 restart rnd-backend
+          # Use Caddy admin API (no sudo needed) — reload config at runtime
+          if caddy adapt --config infra/Caddyfile 2>/dev/null \
+             | curl -sf -X POST http://localhost:2019/load \
+                 -H "Content-Type: application/json" -d @-; then
+            echo "✓ Caddy config updated via admin API"
           else
-            pm2 start backend/dist/index.js --name rnd-backend
+            echo "⚠ Admin API unavailable — trying sudo fallback"
+            sudo cp infra/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy \
+              && echo "✓ Caddy updated via sudo" \
+              || echo "✗ Could not update Caddy — run manually on server:"
+            echo "    sudo cp infra/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy"
           fi
-          pm2 save
-
-      - name: Update Caddy config
-        shell: bash
-        run: |
-          set -euo pipefail
-          sudo cp infra/Caddyfile /etc/caddy/Caddyfile
-          sudo systemctl reload caddy
 
       - name: Verify deployment
         shell: bash
         run: |
           set -euo pipefail
-          sleep 3
+          sleep 2
           curl -fsS https://rnd.zenzerobiogas.com >/dev/null
+          echo "✓ Site accessible"

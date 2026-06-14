@@ -1,12 +1,13 @@
 rnd.zenzerobiogas.com {
-    # MQTT WebSocket bridge — proxy to local backend
+    # MQTT WebSocket proxy → broker port 8083 (plain WS, no backend needed)
     handle /ws {
-        reverse_proxy localhost:9001
-    }
-
-    # REST API proxy (optional — health, latest, publish)
-    handle /api* {
-        reverse_proxy localhost:3000
+        rewrite * /mqtt
+        reverse_proxy mqtt.zenzerobiogas.com:8083 {
+            transport http {
+                versions 1.1
+            }
+            header_up Host mqtt.zenzerobiogas.com
+        }
     }
 
     # SPA frontend
