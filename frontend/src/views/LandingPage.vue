@@ -4,498 +4,478 @@ import { mqttState } from '@/composables/useMqtt'
 
 const router = useRouter()
 
-const sections = [
-  {
-    id: 'manual',
-    path: '/manual',
-    icon: 'bx-joystick',
-    color: '#00e676',
-    colorDim: 'rgba(0,230,118,0.12)',
-    colorBorder: 'rgba(0,230,118,0.25)',
-    label: 'Manual',
-    title: 'Manual Control',
-    desc: 'สั่งงาน Lamp และ Output โดยตรง ควบคุมผ่าน MQTT ด้วย 3-tier Authority',
-    tags: ['Lamp 1–7', 'Register Write', 'Authority'],
-  },
-  {
-    id: 'process',
-    path: '/process',
-    icon: 'bx-slider-alt',
-    color: '#00e5ff',
-    colorDim: 'rgba(0,229,255,0.10)',
-    colorBorder: 'rgba(0,229,255,0.22)',
-    label: 'Parameter Setting',
-    title: 'Parameter Setting',
-    desc: 'ตั้งค่า Threshold อุณหภูมิ Setpoint และ Mapping เงื่อนไขสู่ Lamp Output',
-    tags: ['Threshold', 'SP1 / SP2', 'Hysteresis'],
-  },
-  {
-    id: 'auto',
-    path: '/auto',
-    icon: 'bx-bot',
-    color: '#ffa726',
-    colorDim: 'rgba(255,167,38,0.10)',
-    colorBorder: 'rgba(255,167,38,0.25)',
-    label: 'Auto Process',
-    title: 'Auto Process',
-    desc: 'โหมดอัตโนมัติ ORP 5-Band, Timer Schedule และ Energy Peak Control',
-    tags: ['ORP Bands', 'Timer', 'Peak Sched'],
-  },
-  {
-    id: 'ai',
-    path: '/test',
-    icon: 'bx-brain',
-    color: '#ce93d8',
-    colorDim: 'rgba(206,147,216,0.10)',
-    colorBorder: 'rgba(206,147,216,0.25)',
-    label: 'AI & Simulation',
-    title: 'AI & Simulation',
-    desc: 'จำลองระบบ Simulation, Override Sensor และ MQTT Diagnostic Tools',
-    tags: ['Simulation', 'Override', 'MQTT Debug'],
-  },
+const navModules = [
+  { path: '/manual',  icon: 'bx-joystick-alt', label: 'Manual Control' },
+  { path: '/process', icon: 'bx-slider-alt',   label: 'Parameter' },
+  { path: '/auto',    icon: 'bx-shape-circle', label: 'Auto Process' },
+  { path: '/test',    icon: 'bx-chip',         label: 'AI & Sim' },
+]
+
+const bars = [
+  { h: 40,  c: '#c0392b' },
+  { h: 65,  c: '#e67e22' },
+  { h: 100, c: '#d4a040' },
+  { h: 75,  c: '#27ae60' },
+  { h: 52,  c: '#1abc9c' },
+]
+
+const industries = [
+  { num: '01', label: 'Natural Rubber', tags: ['RSS Grade', 'STR', 'Wastewater'],  icon: 'bxs-leaf',        accent: '#22c55e' },
+  { num: '02', label: 'Glove',          tags: ['Latex Dip', 'Chemical WW', 'QC'],  icon: 'bx-shield-alt-2', accent: '#38bdf8' },
+  { num: '03', label: 'Tannery',        tags: ['Hide Process', 'Chromium', 'Odor'],icon: 'bxs-package',     accent: '#c084fc' },
+  { num: '04', label: 'Biogas',         tags: ['Anaerobic', 'Energy', 'Slurry'],   icon: 'bx-gas-pump',     accent: '#4ade80' },
+  { num: '05', label: 'Food Industry',  tags: ['Processing', 'BOD/COD', 'HACCP'],  icon: 'bx-restaurant',   accent: '#fb923c' },
+  { num: '06', label: 'Agriculture',    tags: ['Farm', 'Irrigation', 'Nutrient'],  icon: 'bxs-plant',       accent: '#86efac' },
+  { num: '07', label: 'Ethanol',        tags: ['Distillery', 'Vinasse', 'Fuel'],   icon: 'bx-flask',        accent: '#f472b6' },
 ]
 </script>
 
 <template>
-  <div class="landing">
+  <div class="page">
 
-    <!-- ── Background effects ─────────────────────────────────────────────── -->
-    <div class="bg-glow g1"></div>
-    <div class="bg-glow g2"></div>
-    <div class="bg-grid"></div>
+    <!-- ══ Top navigation bar ════════════════════════════════════════════ -->
+    <header class="topbar">
+      <div class="tb-brand">
+        <div class="mini-icon">
+          <span v-for="b in bars" :key="b.c" class="mi-bar"
+            :style="{ height: b.h+'%', background: b.c }"></span>
+        </div>
+        <span class="tb-name">ZenMAC</span>
+      </div>
 
-    <!-- ── Hero ──────────────────────────────────────────────────────────── -->
-    <header class="hero">
+      <nav class="tb-modules">
+        <button v-for="m in navModules" :key="m.path"
+          class="tb-mod-btn" @click="router.push(m.path)">
+          <i class="bx" :class="m.icon"></i>
+          {{ m.label }}
+        </button>
+      </nav>
 
-      <!-- Logo mark -->
-      <div class="logo-wrap">
-        <div class="logo-icon">
-          <div class="bars">
-            <span class="bar" style="height:38%;background:#c0392b;"></span>
-            <span class="bar" style="height:62%;background:#e67e22;"></span>
-            <span class="bar" style="height:100%;background:#d4a040;"></span>
-            <span class="bar" style="height:74%;background:#27ae60;"></span>
-            <span class="bar" style="height:50%;background:#1abc9c;"></span>
+      <div class="tb-actions">
+        <div class="mqtt-pill" :class="mqttState">
+          <span class="mp-dot"></span>
+          {{ mqttState === 'connected' ? 'LIVE' : mqttState === 'connecting' ? 'WAIT' : 'OFF' }}
+        </div>
+        <button class="tb-dashboard" @click="router.push('/dashboard')">
+          Dashboard <i class="bx bx-right-arrow-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ══ Main two-column content ════════════════════════════════════════ -->
+    <main class="content">
+
+      <!-- ── LEFT COLUMN ──────────────────────────────────────────────── -->
+      <div class="left-col">
+
+        <!-- Brand -->
+        <div class="brand-block">
+          <div class="brand-icon">
+            <div class="icon-bars">
+              <span v-for="b in bars" :key="b.c" class="ib-bar"
+                :style="{ height: b.h+'%', background: b.c }"></span>
+            </div>
+          </div>
+          <div>
+            <h1 class="brand-name">ZenMAC</h1>
+            <p class="brand-tagline">ZENZERO MONITOR ANALYSIS &amp; CONTROL</p>
           </div>
         </div>
 
-        <div class="logo-text">
-          <h1 class="brand-name">ZenMAC</h1>
-          <p class="brand-sub">ZENZERO MONITOR ANALYSIS &amp; CONTROL</p>
+        <div class="left-divider"></div>
+
+        <!-- Company -->
+        <div class="company-block">
+          <div>
+            <span class="cmp-label">A PLATFORM BY</span>
+            <p class="cmp-name">Zenzerobiogas Co., Ltd.</p>
+            <p class="cmp-sub">Environmental Engineering &amp; Research</p>
+          </div>
+          <div class="ae2r-badge">AE<sup>2</sup>R</div>
         </div>
+
+        <div class="left-divider"></div>
+
+        <!-- R&D Section -->
+        <div class="rnd-block">
+          <div class="rnd-top">
+            <span class="rnd-badge">
+              <i class="bx bx-code-alt"></i>
+              R&amp;D
+            </span>
+            <span class="rnd-status">
+              <span class="rnd-dot"></span>
+              DEV MODE
+            </span>
+          </div>
+          <h2 class="rnd-title">Research &amp; Development</h2>
+          <p class="rnd-desc">
+            พื้นที่สำหรับทดสอบและพัฒนาระบบควบคุม — ทดลอง logic, ตรวจสอบ MQTT
+            และจำลองการทำงานก่อน deploy จริง
+          </p>
+          <div class="rnd-tags">
+            <span class="rnd-tag"><i class="bx bx-test-tube"></i>Simulation</span>
+            <span class="rnd-tag"><i class="bx bx-git-branch"></i>Prototype</span>
+            <span class="rnd-tag"><i class="bx bx-wifi"></i>MQTT Debug</span>
+            <span class="rnd-tag"><i class="bx bx-analyse"></i>Analysis</span>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Company -->
-      <div class="company-row">
-        <div class="company-info">
-          <span class="company-by">A PLATFORM BY</span>
-          <span class="company-name">Zenzerobiogas Co., Ltd.</span>
-          <span class="company-tag">Environmental Engineering &amp; Research</span>
-        </div>
-        <div class="ae2r-badge">AE²R</div>
+      <!-- ── Vertical divider ──────────────────────────────────────────── -->
+      <div class="col-divider"></div>
+
+      <!-- ── RIGHT COLUMN ─────────────────────────────────────────────── -->
+      <div class="right-col">
+
+        <!-- Philosophy -->
+        <section class="rhs-section">
+          <div class="rhs-header">
+            <span class="rhs-line"></span>
+            <span class="rhs-label">PHILOSOPHY</span>
+          </div>
+          <p class="rhs-quote">
+            <strong class="q-brand">ZenMAC</strong>
+            &ldquo;It&rsquo;s not about sensors or displays, but about using
+            data from research and development and real-world system operation
+            methods to improve system more efficiency and save energy.&rdquo;
+          </p>
+        </section>
+
+        <!-- Designed For -->
+        <section class="rhs-section">
+          <div class="rhs-header">
+            <span class="rhs-line"></span>
+            <span class="rhs-label">DESIGNED FOR</span>
+          </div>
+
+          <div class="industry-grid">
+            <div v-for="ind in industries" :key="ind.label"
+              class="ind-card"
+              :style="{ '--ia': ind.accent }">
+              <i class="bx ind-icon" :class="ind.icon"></i>
+              <div class="ind-info">
+                <span class="ind-label">{{ ind.label }}</span>
+                <span class="ind-sub">{{ ind.tags.join(' · ') }}</span>
+              </div>
+              <span class="ind-num">{{ ind.num }}</span>
+            </div>
+          </div>
+        </section>
+
       </div>
 
-      <!-- Divider -->
-      <div class="hero-divider"></div>
+    </main>
 
-      <!-- Philosophy -->
-      <div class="philosophy">
-        <div class="phil-label">
-          <span class="phil-line"></span>
-          <span class="phil-tag">PHILOSOPHY</span>
-        </div>
-        <blockquote class="phil-quote">
-          <span class="brand-inline">ZenMAC</span>
-          "It's not about sensors or displays, but about using data from research and
-          development and real-world system operation methods to improve system
-          more efficiency and save energy."
-        </blockquote>
-      </div>
-
-    </header>
-
-    <!-- ── MQTT Status pill ───────────────────────────────────────────────── -->
-    <div class="mqtt-pill" :class="mqttState">
-      <span class="mp-dot"></span>
-      <span class="mp-txt">MQTT {{ mqttState === 'connected' ? 'LIVE' : mqttState === 'connecting' ? 'CONNECTING…' : 'OFFLINE' }}</span>
-    </div>
-
-    <!-- ── Sections ───────────────────────────────────────────────────────── -->
-    <section class="sections">
-      <div
-        v-for="s in sections"
-        :key="s.id"
-        class="sec-card"
-        :style="{ '--c': s.color, '--c-dim': s.colorDim, '--c-brd': s.colorBorder }"
-        @click="router.push(s.path)"
-      >
-        <!-- top accent bar -->
-        <div class="sec-accent"></div>
-
-        <!-- number -->
-        <div class="sec-num">0{{ sections.indexOf(s) + 1 }}</div>
-
-        <!-- icon -->
-        <div class="sec-icon-wrap">
-          <i class="bx sec-icon" :class="s.icon"></i>
-        </div>
-
-        <!-- label badge -->
-        <div class="sec-label">{{ s.label }}</div>
-
-        <!-- title -->
-        <h3 class="sec-title">{{ s.title }}</h3>
-
-        <!-- desc -->
-        <p class="sec-desc">{{ s.desc }}</p>
-
-        <!-- tags -->
-        <div class="sec-tags">
-          <span v-for="t in s.tags" :key="t" class="sec-tag">{{ t }}</span>
-        </div>
-
-        <!-- arrow -->
-        <div class="sec-arrow">
-          <i class="bx bx-right-arrow-alt"></i>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Dashboard link ────────────────────────────────────────────────── -->
-    <div class="dash-row">
-      <button class="dash-btn" @click="router.push('/dashboard')">
-        <i class="bx bx-tachometer"></i>
-        เข้าสู่ Dashboard (Live Monitoring)
-        <i class="bx bx-right-arrow-alt"></i>
-      </button>
-    </div>
-
-    <!-- ── Footer ────────────────────────────────────────────────────────── -->
-    <footer class="lnd-footer">
+    <!-- ══ Footer ════════════════════════════════════════════════════════ -->
+    <footer class="foot">
       <span>© 2025 Zenzerobiogas Co., Ltd.</span>
-      <span class="dot">·</span>
-      <span>ZenMAC R&amp;D Platform</span>
-      <span class="dot">·</span>
-      <span style="font-family:monospace;font-size:10px;color:#263238;">v1.1-beta</span>
+      <span class="foot-dot">·</span>
+      <span>Environmental Engineering &amp; Research</span>
+      <span class="foot-dot">·</span>
+      <span class="foot-ver">v1.1-beta</span>
     </footer>
 
   </div>
 </template>
 
 <style scoped>
-/* ── Root ───────────────────────────────────────────────────────────────── */
-.landing {
-  min-height: 100vh;
-  background: #080e18;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ─── Root ────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page {
+  height: 100vh;
+  background: #000;
+  color: #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 48px 24px 32px;
-  position: relative;
   overflow: hidden;
 }
 
-/* ── Background ─────────────────────────────────────────────────────────── */
-.bg-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  z-index: 0;
-}
-.g1 {
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(212,160,64,0.07) 0%, transparent 70%);
-  top: -200px; left: 50%; transform: translateX(-50%);
-}
-.g2 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
-  bottom: 0; right: -100px;
-}
-.bg-grid {
-  position: absolute; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* ─── Top bar ─────────────────────────────────────────────────────────── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  height: 58px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: #050505;
 }
 
-/* ── Hero ───────────────────────────────────────────────────────────────── */
-.hero {
-  width: 100%;
-  max-width: 760px;
-  position: relative;
-  z-index: 1;
-  margin-bottom: 12px;
+.tb-brand { display: flex; align-items: center; gap: 10px; }
+.mini-icon { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+.mi-bar    { display: block; width: 3.5px; border-radius: 2px 2px 0 0; }
+.tb-name {
+  font-size: 17px; font-weight: 800; letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #d4a040, #f0c060);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 
-/* Logo */
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 28px;
+.tb-modules { display: flex; align-items: center; gap: 2px; }
+.tb-mod-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 7px;
+  background: transparent; border: 1px solid transparent;
+  color: #3f4f60; font-size: 12.5px; font-weight: 500; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
 }
-.logo-icon {
-  width: 80px; height: 80px;
-  background: linear-gradient(145deg, #0d1e35, #0a1626);
-  border-radius: 20px;
-  border: 1.5px solid rgba(212,160,64,0.25);
-  display: flex; align-items: flex-end; justify-content: center;
-  padding: 14px 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,160,64,0.1);
+.tb-mod-btn i { font-size: 14px; }
+.tb-mod-btn:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.09);
+  color: #8899aa;
+}
+
+.tb-actions { display: flex; align-items: center; gap: 10px; }
+
+.mqtt-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  color: #2d3f52;
+}
+.mp-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.mqtt-pill.connected  { border-color: rgba(34,197,94,0.4); color: #22c55e; }
+.mqtt-pill.connecting { border-color: rgba(251,146,60,0.4); color: #fb923c; }
+.mqtt-pill.connected  .mp-dot { box-shadow: 0 0 6px rgba(34,197,94,0.8); animation: blink 2s infinite; }
+.mqtt-pill.connecting .mp-dot { animation: blink 0.9s infinite; }
+
+.tb-dashboard {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 8px;
+  background: rgba(212,160,64,0.1); border: 1px solid rgba(212,160,64,0.35);
+  color: #d4a040; font-size: 12.5px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
+}
+.tb-dashboard i { font-size: 16px; }
+.tb-dashboard:hover { background: rgba(212,160,64,0.18); border-color: rgba(212,160,64,0.55); color: #f0c060; }
+
+/* ─── Main content ────────────────────────────────────────────────────── */
+.content {
+  flex: 1; display: flex; min-height: 0;
+}
+
+/* ─── Left column ─────────────────────────────────────────────────────── */
+.left-col {
+  width: 50%; flex-shrink: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 72px 0 96px;
+  gap: 40px;
+}
+
+.brand-block {
+  display: flex; align-items: center; gap: 32px;
+}
+.brand-icon {
+  width: 148px; height: 148px;
+  background: #0e0e0e;
+  border-radius: 32px;
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.bars {
-  display: flex; align-items: flex-end;
-  gap: 5px; height: 36px; width: 100%;
+.icon-bars {
+  display: flex; align-items: flex-end; gap: 9px;
+  height: 82px; padding-bottom: 5px;
 }
-.bar {
-  flex: 1; border-radius: 3px 3px 0 0;
-  display: block;
-}
+.ib-bar { display: block; width: 14px; border-radius: 4px 4px 0 0; }
 
-.logo-text { display: flex; flex-direction: column; gap: 4px; }
 .brand-name {
-  font-size: 60px;
-  font-weight: 900;
-  letter-spacing: -1px;
-  line-height: 1;
-  background: linear-gradient(135deg, #e8a020 0%, #f0c060 50%, #d4a040 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 112px; font-weight: 900;
+  letter-spacing: -5px; line-height: 1;
+  background: linear-gradient(160deg, #d4900a 0%, #f5c842 45%, #c8820a 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.brand-sub {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3.5px;
-  color: #546e7a;
-  text-transform: uppercase;
+.brand-tagline {
+  font-size: 11px; font-weight: 700; letter-spacing: 3.5px;
+  color: #2d3f52; text-transform: uppercase; margin-top: 10px;
 }
 
-/* Company */
-.company-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  margin-bottom: 28px;
+.left-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09) 40%, rgba(255,255,255,0.09) 60%, transparent);
 }
-.company-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+
+.company-block {
+  display: flex; align-items: center; justify-content: space-between;
 }
-.company-by   { font-size: 9px; font-weight: 700; letter-spacing: 2px; color: #37474f; }
-.company-name { font-size: 18px; font-weight: 700; color: #c8d8e8; }
-.company-tag  { font-size: 12px; color: #546e7a; }
+.cmp-label {
+  display: block; font-size: 9px; font-weight: 700;
+  letter-spacing: 2.5px; color: #1e3040; text-transform: uppercase; margin-bottom: 7px;
+}
+.cmp-name { font-size: 21px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+.cmp-sub  { font-size: 13.5px; color: #3f5060; }
 
 .ae2r-badge {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #d4a040;
-  padding: 12px 20px;
-  border: 2px solid rgba(212,160,64,0.35);
-  border-radius: 12px;
-  background: rgba(212,160,64,0.06);
-  font-family: 'JetBrains Mono', monospace;
+  padding: 13px 22px; border-radius: 11px;
+  background: #0a0a0a; border: 1px solid rgba(255,255,255,0.13);
+  font-size: 20px; font-weight: 800; color: #d4a040; letter-spacing: 1px; flex-shrink: 0;
+}
+.ae2r-badge sup { font-size: 12px; vertical-align: super; }
+
+/* R&D Block */
+.rnd-block {
+  display: flex; flex-direction: column; gap: 12px;
 }
 
-/* Divider */
-.hero-divider { display: none; }
-
-/* Philosophy */
-.philosophy { margin-bottom: 4px; }
-.phil-label {
+.rnd-top {
   display: flex; align-items: center; gap: 10px;
-  margin-bottom: 12px;
 }
-.phil-line {
+
+.rnd-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 6px;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.25);
+  font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+  color: #22c55e; text-transform: uppercase;
+}
+.rnd-badge i { font-size: 13px; }
+
+.rnd-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: 6px;
+  background: rgba(251,146,60,0.06);
+  border: 1px solid rgba(251,146,60,0.18);
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  color: #fb923c;
+}
+.rnd-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #fb923c;
+  box-shadow: 0 0 6px rgba(251,146,60,0.8);
+  animation: blink 1.8s infinite;
+}
+
+.rnd-title {
+  font-size: 22px; font-weight: 800;
+  color: #e2e8f0; letter-spacing: -0.5px; line-height: 1.1;
+}
+
+.rnd-desc {
+  font-size: 12.5px; color: #344050; line-height: 1.7;
+}
+
+.rnd-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.rnd-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 20px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 10.5px; font-weight: 600; color: #3a4f60;
+  transition: all 0.15s;
+}
+.rnd-tag i { font-size: 12px; }
+.rnd-tag:hover {
+  border-color: rgba(34,197,94,0.25);
+  color: #22c55e;
+  background: rgba(34,197,94,0.05);
+}
+
+
+/* ─── Vertical divider ────────────────────────────────────────────────── */
+.col-divider {
+  width: 1px; flex-shrink: 0;
+  background: linear-gradient(180deg,
+    transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.1) 80%, transparent 100%);
+}
+
+/* ─── Right column ────────────────────────────────────────────────────── */
+.right-col {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding: 0 72px 0 64px;
+  gap: 28px;
+}
+
+.rhs-section { display: flex; flex-direction: column; gap: 16px; }
+
+.rhs-header { display: flex; align-items: center; gap: 12px; }
+.rhs-line {
   display: block; width: 28px; height: 2px;
-  background: linear-gradient(90deg, #27ae60, #1abc9c);
+  background: #22c55e; border-radius: 2px; flex-shrink: 0;
 }
-.phil-tag {
-  font-size: 9px; font-weight: 700; letter-spacing: 2.5px;
-  color: #546e7a; text-transform: uppercase;
-}
-
-.phil-quote {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.65;
-  color: #90a4ae;
-  border: none;
-  padding: 0;
-}
-.brand-inline {
-  font-size: 20px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #e8a020, #f0c060);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-right: 6px;
+.rhs-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 3.5px;
+  color: #2a3f4f; text-transform: uppercase;
 }
 
-/* ── MQTT pill ───────────────────────────────────────────────────────────── */
-.mqtt-pill {
-  position: relative; z-index: 1;
-  display: flex; align-items: center; gap: 7px;
-  padding: 6px 14px; border-radius: 20px;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.07);
-  margin-bottom: 36px;
-  align-self: flex-start;
+.rhs-quote {
+  font-size: 21px; font-weight: 400; line-height: 1.75; color: #8fa8b8;
 }
-.mp-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #546e7a; flex-shrink: 0;
-}
-.mqtt-pill.connected .mp-dot    { background: #00e676; box-shadow: 0 0 6px rgba(0,230,118,0.7); animation: pulse 2s infinite; }
-.mqtt-pill.connecting .mp-dot   { background: #ffa726; animation: pulse 1s infinite; }
-.mqtt-pill.disconnected .mp-dot { background: #ef5350; }
-.mp-txt { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #546e7a; }
-.mqtt-pill.connected .mp-txt    { color: #00e676; }
-.mqtt-pill.connecting .mp-txt   { color: #ffa726; }
+.q-brand { font-weight: 800; color: #d4a040; -webkit-text-fill-color: #d4a040; }
 
-/* ── Sections Grid ───────────────────────────────────────────────────────── */
-.sections {
-  position: relative; z-index: 1;
-  width: 100%;
-  max-width: 920px;
+/* ─── Industry grid ───────────────────────────────────────────────────── */
+.industry-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 8px;
 }
 
-.sec-card {
+.ind-card {
   position: relative;
-  background: rgba(8, 16, 28, 0.85);
-  border: 1px solid var(--c-brd);
-  border-radius: 16px;
-  padding: 22px 18px 18px;
-  cursor: pointer;
-  transition: all 0.22s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow: hidden;
-  backdrop-filter: blur(4px);
-}
-.sec-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--c);
-  background: var(--c-dim);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--c-brd);
-}
-
-.sec-accent {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--c);
-  opacity: 0.7;
-  border-radius: 16px 16px 0 0;
-}
-.sec-card:hover .sec-accent { opacity: 1; }
-
-.sec-num {
-  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-  color: rgba(255,255,255,0.12);
-  font-family: monospace;
-}
-
-.sec-icon-wrap {
-  width: 44px; height: 44px;
+  display: flex; flex-direction: row; align-items: center;
+  gap: 12px; padding: 14px 14px 14px 16px;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
-  background: var(--c-dim);
-  border: 1px solid var(--c-brd);
+  cursor: default;
+  transition: all 0.18s ease;
+  overflow: hidden;
+}
+.ind-card:hover {
+  background: #181818;
+  border-color: color-mix(in srgb, var(--ia) 30%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+
+.ind-icon {
+  font-size: 28px;
+  color: var(--ia);
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ia) 40%, transparent));
+  transition: filter 0.18s;
+}
+.ind-card:hover .ind-icon {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--ia) 70%, transparent));
+}
+
+.ind-info  { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ind-label {
+  font-size: 13px; font-weight: 700;
+  color: #d0dde8; letter-spacing: -0.2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ind-sub   {
+  font-size: 10px; font-weight: 400; color: #2d4050;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ind-card:hover .ind-sub { color: #3d5060; }
+
+.ind-num {
+  font-size: 10px; font-weight: 700; font-family: monospace;
+  color: rgba(255,255,255,0.08); letter-spacing: 0.5px;
+  flex-shrink: 0; align-self: flex-start; padding-top: 1px;
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────────── */
+.foot {
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
+  gap: 10px; height: 38px; flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  font-size: 11px; color: #1a2a38;
 }
-.sec-card:hover .sec-icon-wrap {
-  background: rgba(0,0,0,0.2);
-  box-shadow: 0 0 16px var(--c-brd);
-}
-.sec-icon {
-  font-size: 22px;
-  color: var(--c);
-}
+.foot-dot { color: #111; }
+.foot-ver { font-family: monospace; letter-spacing: 1px; }
 
-.sec-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 2px;
-  color: var(--c);
-  text-transform: uppercase;
-}
-
-.sec-title {
-  font-size: 15px; font-weight: 700; color: #cfd8dc;
-  line-height: 1.2;
-}
-
-.sec-desc {
-  font-size: 11px; color: #546e7a; line-height: 1.6;
-  flex: 1;
-}
-
-.sec-tags {
-  display: flex; flex-wrap: wrap; gap: 5px;
-}
-.sec-tag {
-  font-size: 9px; font-weight: 600; letter-spacing: 0.5px;
-  padding: 2px 8px; border-radius: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #546e7a;
-}
-
-.sec-arrow {
-  display: flex; justify-content: flex-end;
-  font-size: 20px; color: rgba(255,255,255,0.1);
-  transition: all 0.2s;
-}
-.sec-card:hover .sec-arrow { color: var(--c); transform: translateX(4px); }
-
-/* ── Dashboard Button ────────────────────────────────────────────────────── */
-.dash-row {
-  position: relative; z-index: 1;
-  margin-bottom: 32px;
-}
-.dash-btn {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 28px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #78909c;
-  font-size: 13px; font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.dash-btn:hover {
-  background: rgba(0,229,255,0.06);
-  border-color: rgba(0,229,255,0.25);
-  color: #00e5ff;
-}
-.dash-btn i { font-size: 18px; }
-
-/* ── Footer ─────────────────────────────────────────────────────────────── */
-.lnd-footer {
-  position: relative; z-index: 1;
-  display: flex; align-items: center; gap: 10px;
-  font-size: 11px; color: #263238;
-  margin-top: auto;
-}
-.dot { color: #1e3a52; }
-
-@keyframes pulse {
+@keyframes blink {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
+  50%       { opacity: 0.3; }
 }
 </style>
