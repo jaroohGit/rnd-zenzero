@@ -196,12 +196,11 @@ function forceBlower(id: number, state: 'RUN' | 'STOP' | 'STBY') {
     <!-- ③ Direct Raw Publish -->
     <PanelCard color="purple" title="Raw MQTT Publish" icon="📡">
       <div class="note-box" style="margin-bottom:10px;">
-        ส่งตรงผ่าน MQTT — ต้องการ WEB control + MQTT connected
+        ส่งตรงผ่าน MQTT client — <b>ไม่ผ่าน authority check</b> · ต้องการแค่ MQTT connected
       </div>
       <div class="field-lbl">TOPIC</div>
       <select class="hmi-select" style="width:100%;margin-bottom:8px;" v-model="rawTopic">
-        <option value="Demo/zenmac/QQ">Demo/zenmac/QQ (cmd)</option>
-      <option value="Demo/zenmac/cmd">Demo/zenmac/cmd</option>
+        <option value="Demo/zenmac/QQ">Demo/zenmac/QQ</option>
         <option value="Demo/zenmac/mode">Demo/zenmac/mode</option>
         <option value="Demo/zenmac/authority">Demo/zenmac/authority</option>
         <option value="Demo/zenmac/blower/tb01/cmd">blower/tb01/cmd</option>
@@ -211,14 +210,11 @@ function forceBlower(id: number, state: 'RUN' | 'STOP' | 'STBY') {
       <textarea class="hmi-input" rows="5" style="width:100%;resize:vertical;font-size:11px;margin-bottom:8px;"
         v-model="rawPayload"></textarea>
       <button class="btn btn-save" style="width:100%;"
-        :disabled="mqttState!=='connected' || !auth.iHaveControl"
+        :disabled="mqttState!=='connected'"
         @click="directPublish">
-        📡 PUBLISH
+        📡 RAW PUBLISH
       </button>
-      <div v-if="!auth.iHaveControl" class="note-box err-note" style="margin-top:6px;">
-        🔒 กด REQUEST CONTROL ที่ Header ก่อน
-      </div>
-      <div v-else-if="mqttState!=='connected'" class="note-box warn-note" style="margin-top:6px;">
+      <div v-if="mqttState!=='connected'" class="note-box warn-note" style="margin-top:6px;">
         📡 รอ MQTT connected
       </div>
     </PanelCard>

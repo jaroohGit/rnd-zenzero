@@ -7,7 +7,7 @@ const groups = [
   {
     label: 'MONITOR',
     items: [
-      { path: '/',        icon: 'bx-tachometer',    label: 'Overview' },
+      { path: '/',        icon: 'bx-tachometer',    label: 'Dashboard' },
       { path: '/camera',  icon: 'bx-camera',        label: 'CCTV' },
     ],
   },
@@ -26,9 +26,9 @@ const groups = [
     ],
   },
   {
-    label: 'SYSTEM',
+    label: 'DEV',
     items: [
-      { path: '/test',    icon: 'bx-bug-alt',       label: 'Debug' },
+      { path: '/test',    icon: 'bx-terminal',      label: 'Test' },
     ],
   },
 ]
@@ -67,7 +67,7 @@ function isActive(path: string) {
 
     <!-- Bottom: version tag -->
     <div class="sidebar-footer">
-      <div class="ver-tag">v1.0</div>
+      <div class="ver-tag">v1.1</div>
     </div>
   </aside>
 </template>
