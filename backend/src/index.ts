@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { createServer } from 'http'
@@ -13,15 +14,18 @@ const io = new Server(httpServer, {
 app.use(cors())
 app.use(express.json())
 
-const PORT = process.env.PORT ?? 3000
-const MQTT_URL = process.env.MQTT_URL ?? 'mqtt://localhost:1883'
+const PORT         = process.env.PORT         ?? 3000
+const MQTT_URL     = process.env.MQTT_URL     ?? 'mqtt://localhost:1883'
+const TOPIC_STATUS = process.env.TOPIC_STATUS ?? 'Demo/zenmac/QQ'
+const TOPIC_CMD    = process.env.TOPIC_CMD    ?? 'Demo/zenmac/cmd'
+const TOPIC_AUTH   = process.env.TOPIC_AUTH   ?? 'Demo/zenmac/authority'
 
 // ── MQTT ──────────────────────────────────────────────────────────────────────
 const mqttClient = mqtt.connect(MQTT_URL)
 
 mqttClient.on('connect', () => {
   console.log(`[MQTT] Connected: ${MQTT_URL}`)
-  mqttClient.subscribe('#')
+  mqttClient.subscribe([TOPIC_STATUS, TOPIC_AUTH])
 })
 
 mqttClient.on('message', (topic, payload) => {
@@ -47,9 +51,14 @@ io.on('connection', (socket) => {
 
 // ── REST ──────────────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', mqtt: mqttClient.connected })
+  res.json({
+    status: 'ok',
+    mqtt:   mqttClient.connected,
+    topics: { status: TOPIC_STATUS, cmd: TOPIC_CMD, auth: TOPIC_AUTH },
+  })
 })
 
 httpServer.listen(PORT, () => {
   console.log(`[Server] Running on http://localhost:${PORT}`)
+  console.log(`[Config] MQTT: ${MQTT_URL}`)
 })

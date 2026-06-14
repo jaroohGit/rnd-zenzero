@@ -1,12 +1,17 @@
 node_modules/
 dist/
-.env
-.env.local
 *.log
 
-# Vite
+# ── Vite ─────────────────────────────────────────────────────────────────────
 frontend/.vite/
 frontend/dist/
 
-# Backend build
+# ── Backend build ─────────────────────────────────────────────────────────────
 backend/dist/
+
+# ── Env files (ห้าม commit ค่า secret) ───────────────────────────────────────
+# git-ignored: .env.local (local dev), .env (backend local)
+frontend/.env.local
+backend/.env
+
+# commit ได้: .env (frontend base), .env.production, .env.example

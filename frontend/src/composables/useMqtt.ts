@@ -17,21 +17,22 @@ import { useSensorsStore }      from '@/stores/sensors'
 import { useBlowerStore }       from '@/stores/blower'
 import { useProcessParamStore } from '@/stores/processParam'
 
-// ── Broker info (actual TCP broker, accessed via gateway) ─────────────────
-export const BROKER_HOST = 'mqtt.zenzerobiogas.com'
-export const BROKER_PORT = 1884
+// ── Broker info (read from .env) ─────────────────────────────────────────
+export const BROKER_HOST = import.meta.env.VITE_MQTT_HOST  ?? 'mqtt.zenzerobiogas.com'
+export const BROKER_PORT = Number(import.meta.env.VITE_MQTT_PORT ?? 1884)
+const        WS_PORT     = Number(import.meta.env.VITE_MQTT_WS_PORT ?? 9001)
 
-// Gateway URL follows the page's host automatically:
-//   dev  → ws://localhost:9001
-//   prod → ws://<server-ip-or-domain>:9001
+// Gateway URL: ใช้ VITE_GATEWAY_URL ถ้าตั้งไว้ (เช่น .env.local)
+// ถ้าไม่ตั้ง → auto-detect จาก window.location.hostname (สำหรับ production)
 const _proto = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws'
 const _host  = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
-export const GATEWAY_URL = `${_proto}://${_host}:9001`
+export const GATEWAY_URL: string =
+  import.meta.env.VITE_GATEWAY_URL ?? `${_proto}://${_host}:${WS_PORT}`
 
-// ── MQTT Topics ───────────────────────────────────────────────────────────
-export const TOPIC_STATUS = 'Demo/zenmac/QQ'        // PLC → Web (sensor data)
-export const TOPIC_CMD    = 'Demo/zenmac/cmd'        // Web → PLC (commands)
-export const TOPIC_AUTH   = 'Demo/zenmac/authority'  // Authority handshake
+// ── MQTT Topics (read from .env) ──────────────────────────────────────────
+export const TOPIC_STATUS = import.meta.env.VITE_TOPIC_STATUS ?? 'Demo/zenmac/QQ'
+export const TOPIC_CMD    = import.meta.env.VITE_TOPIC_CMD    ?? 'Demo/zenmac/cmd'
+export const TOPIC_AUTH   = import.meta.env.VITE_TOPIC_AUTH   ?? 'Demo/zenmac/authority'
 
 // ── Reactive state (module-level singleton) ───────────────────────────────
 export const mqttConnected = ref(false)
