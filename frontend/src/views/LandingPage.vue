@@ -20,8 +20,8 @@ const bars = [
 ]
 
 const industries = [
-  { num: '01', label: 'Natural Rubber', tags: ['RSS Grade', 'STR', 'Wastewater'],  icon: 'bxs-leaf',        accent: '#22c55e' },
-  { num: '02', label: 'Glove',          tags: ['Latex Dip', 'Chemical WW', 'QC'],  icon: 'bx-shield-alt-2', accent: '#38bdf8' },
+  { num: '01', label: 'Natural Rubber', tags: ['Latex & STR', 'Wastewater'],      icon: 'bxs-leaf',        accent: '#22c55e' },
+  { num: '02', label: 'Glove',          tags: ['NR', 'NBR'],                       icon: 'bx-shield-alt-2', accent: '#38bdf8' },
   { num: '03', label: 'Tannery',        tags: ['Hide Process', 'Chromium', 'Odor'],icon: 'bxs-package',     accent: '#c084fc' },
   { num: '04', label: 'Biogas',         tags: ['Anaerobic', 'Energy', 'Slurry'],   icon: 'bx-gas-pump',     accent: '#4ade80' },
   { num: '05', label: 'Food Industry',  tags: ['Processing', 'BOD/COD', 'HACCP'],  icon: 'bx-restaurant',   accent: '#fb923c' },
@@ -279,26 +279,26 @@ const industries = [
 }
 
 .brand-block {
-  display: flex; align-items: center; gap: 32px;
+  display: flex; align-items: center; gap: 27px;
 }
 .brand-icon {
-  width: 148px; height: 148px;
+  width: 126px; height: 126px;
   background: #0e0e0e;
-  border-radius: 32px;
+  border-radius: 27px;
   border: 1px solid rgba(255,255,255,0.09);
   box-shadow: 0 16px 48px rgba(0,0,0,0.7);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 .icon-bars {
-  display: flex; align-items: flex-end; gap: 9px;
-  height: 82px; padding-bottom: 5px;
+  display: flex; align-items: flex-end; gap: 8px;
+  height: 70px; padding-bottom: 5px;
 }
-.ib-bar { display: block; width: 14px; border-radius: 4px 4px 0 0; }
+.ib-bar { display: block; width: 12px; border-radius: 4px 4px 0 0; }
 
 .brand-name {
-  font-size: 112px; font-weight: 900;
-  letter-spacing: -5px; line-height: 1;
+  font-size: 95px; font-weight: 900;
+  letter-spacing: -4.25px; line-height: 1;
   background: linear-gradient(160deg, #d4900a 0%, #f5c842 45%, #c8820a 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
@@ -442,54 +442,48 @@ const industries = [
 /* ─── Industry grid ───────────────────────────────────────────────────── */
 .industry-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 20px;
 }
 
 .ind-card {
-  position: relative;
-  display: flex; flex-direction: row; align-items: center;
-  gap: 12px; padding: 14px 14px 14px 16px;
-  background: #111;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
+  display: flex; align-items: center;
+  gap: 12px; padding: 10px 10px 10px 14px;
+  border-left: 2px solid color-mix(in srgb, var(--ia) 35%, transparent);
+  border-radius: 0 6px 6px 0;
+  background: transparent;
   cursor: default;
-  transition: all 0.18s ease;
-  overflow: hidden;
+  transition: all 0.15s ease;
 }
 .ind-card:hover {
-  background: #181818;
-  border-color: color-mix(in srgb, var(--ia) 30%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.025);
+  border-left-color: var(--ia);
 }
 
 .ind-icon {
-  font-size: 28px;
+  font-size: 18px;
   color: var(--ia);
   flex-shrink: 0;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ia) 40%, transparent));
-  transition: filter 0.18s;
+  opacity: 0.7;
+  transition: opacity 0.15s;
 }
-.ind-card:hover .ind-icon {
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--ia) 70%, transparent));
-}
+.ind-card:hover .ind-icon { opacity: 1; }
 
-.ind-info  { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ind-info  { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .ind-label {
-  font-size: 13px; font-weight: 700;
-  color: #d0dde8; letter-spacing: -0.2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 12.5px; font-weight: 600;
+  color: #90a0b0; letter-spacing: -0.1px;
 }
 .ind-sub   {
-  font-size: 10px; font-weight: 400; color: #2d4050;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 10px; font-weight: 400; color: #243240;
 }
-.ind-card:hover .ind-sub { color: #3d5060; }
+.ind-card:hover .ind-label { color: #b8c8d8; }
+.ind-card:hover .ind-sub   { color: color-mix(in srgb, var(--ia) 35%, #243240); }
 
 .ind-num {
-  font-size: 10px; font-weight: 700; font-family: monospace;
-  color: rgba(255,255,255,0.08); letter-spacing: 0.5px;
-  flex-shrink: 0; align-self: flex-start; padding-top: 1px;
+  font-size: 9px; font-weight: 700; font-family: monospace;
+  color: rgba(255,255,255,0.07); letter-spacing: 0.5px;
+  flex-shrink: 0; align-self: flex-start; padding-top: 2px;
 }
 
 /* ─── Footer ──────────────────────────────────────────────────────────── */
